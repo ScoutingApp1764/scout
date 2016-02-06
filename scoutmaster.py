@@ -210,10 +210,11 @@ class _database():
 
         daters = self.m.execute("SELECT * FROM Data")
         avgs = {} #by team #
+        avgfin = {}
         mins = {}
         maxs = {}
         row =0
-        for extab in daters:
+        for extab in daters: #sqlite3 database entry
             team = extab[1]
 #            del extab[0]
 #            del extab[1]
@@ -221,33 +222,65 @@ class _database():
                 print(avgs[team])
             except:
                 avgs[team] = []
+                #avgfin[team] = []
                 mins[team] = []
                 maxs[team] = []
+                #populate the tables
+                #i = 0
+                for _ in letable:
+                    avgs[team].append([])
+                    mins[team].append([])
+                    maxs[team].append([])
+            #get the avg of the avgs
 
-            col = 0
-            for data in extab:
+
+            col = -1
+            for data in extab:#sqlite database contents
                 col = col+1
-                if not col:
-                    print("YP!!!")
-                    #print(data)
-                else:
-                    #Avgs
-                    try:
-                        print("sucseed")
-                        avgs[team][col].append(data)
-                        avgs[team][col][1] = avgs[team][col][1]+1
+                #Averages.
+                #HERE BE D--
+                #File "<stdin>", line 237, in <module>
+                #TypeError: cannot concatenate 'str' and 'fail' objects
+                avgs[team][col].append(data)
+                #Min
+                mins[team][col] = min(mins[team][col],data)
+                #Max
+                maxs[team][col] = max(maxs[team][col],data)
+                print("Le dat "+str(data)+" Max "+str(maxs[team][col]))
 
-                    except:
-                        print("fail")
-                        avgs[team].append([data,0])
+        print("!!!!!!!!!!")
+        print(avgs)
+        print("!!!!!!!")
 
-#                    avgs[team][col][1] = avgs[team][1]
-                    #Min
-                    mins[team] = min(mins[team],data)
-                    #Max
-                    maxs[team] = max(maxs[team],data)
+
+
+        _writeto = 0
+        for _team in avgs:
+            print("TEAMNUM "+str(_team))
+            theadd=0
+            thecount = 0
+            team = avgs[_team]
+            _col = 0;
+            _writeto = _writeto+1
+            for col in team:
+                _col = _col+1
+                for var in col:
+                    if var is not _team:
+                        print("!!!"+str(var))
+                        theadd = theadd+1
+                        thecount = thecount+var
+                worksheetavg.write(_writeto,_col-1,thecount/theadd)
+                print("thecount "+str(thecount)+" theadd " + str(theadd) + " res " + str(thecount/theadd))
+                print("Wrote for teamnum" +str(_team))
+                #min/max
+                for _co in mins[_team]:
+                    worksheetmin.write(_writeto,_col-1,str(_co))
+                    worksheetmax.write(_writeto,_col-1,str(_co))
+
+
 
         print(avgs)
+        print(avgfin)
         print(mins)
         print(team)
 
@@ -268,18 +301,6 @@ class _database():
                     worksheet1.write(row,col,letable[col][3][data])
                 else:
                     worksheet1.write(row,col,data)
-                #avgs
-                print("!!!"+str(avgs))
-                for team in avgs:
-                    print("~~~"+str(type(col)))
-                    if type(col) is not int:
-                        print("yup@@@@@@@")
-                        for col in team:
-                            added = 0
-                            for part in col[0]:
-                                added = added + part
-                            added = added/col[1]
-                            print(str(added)+"!!!!!!")
 
         #worksheet1.write('A1', 123)
 
