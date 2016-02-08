@@ -208,86 +208,26 @@ class _database():
 
 
 
-        daters = self.m.execute("SELECT * FROM Data")
-        avgs = {} #by team #
-        avgfin = {}
-        mins = {}
-        maxs = {}
-        row =0
-        for extab in daters: #sqlite3 database entry
-            team = extab[1]
-#            del extab[0]
-#            del extab[1]
-            try:
-                print(avgs[team])
-            except:
-                avgs[team] = []
-                #avgfin[team] = []
-                mins[team] = []
-                maxs[team] = []
-                #populate the tables
-                #i = 0
-                for _ in letable:
-                    avgs[team].append([])
-                    mins[team].append([])
-                    maxs[team].append([])
-            #get the avg of the avgs
-
-
-            col = -1
-            for data in extab:#sqlite database contents
-                col = col+1
-                #Averages.
-                #HERE BE D--
-                #File "<stdin>", line 237, in <module>
-                #TypeError: cannot concatenate 'str' and 'fail' objects
-                avgs[team][col].append(data)
-                #Min
-                mins[team][col] = min(mins[team][col],data)
-                #Max
-                maxs[team][col] = max(maxs[team][col],data)
-                print("Le dat "+str(data)+" Max "+str(maxs[team][col]))
-
-        print("!!!!!!!!!!")
-        print(avgs)
-        print("!!!!!!!")
 
 
 
-        _writeto = 0
-        for _team in avgs:
-            print("TEAMNUM "+str(_team))
-            theadd=0
-            thecount = 0
-            team = avgs[_team]
-            _col = 0;
-            _writeto = _writeto+1
-            for col in team:
-                _col = _col+1
-                for var in col:
-                    if var is not _team:
-                        print("!!!"+str(var))
-                        theadd = theadd+1
-                        thecount = thecount+var
-                worksheetavg.write(_writeto,_col-1,thecount/theadd)
-                print("thecount "+str(thecount)+" theadd " + str(theadd) + " res " + str(thecount/theadd))
-                print("Wrote for teamnum" +str(_team))
-                #min/max
-                for _co in mins[_team]:
-                    worksheetmin.write(_writeto,_col-1,str(_co))
-                    worksheetmax.write(_writeto,_col-1,str(_co))
 
 
 
-        print(avgs)
-        print(avgfin)
-        print(mins)
-        print(team)
+
+
+
+
+
+
 
 
         daters = self.m.execute("SELECT * FROM Data")
+        leteams = {}
         row = 0
         for extab in daters:
+            if not leteams[extab[1]]: #if the team is not already in the teams list
+                leteams[extab[1]] = True
             col = -1
             row = row +1
             for data in extab:
@@ -301,6 +241,8 @@ class _database():
                     worksheet1.write(row,col,letable[col][3][data])
                 else:
                     worksheet1.write(row,col,data)
+
+        daters = self.m.execute("SELECT FROM Data WHERE teamNum=")
 
         #worksheet1.write('A1', 123)
 
